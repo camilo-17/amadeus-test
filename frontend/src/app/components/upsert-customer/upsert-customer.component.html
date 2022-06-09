@@ -92,11 +92,11 @@
                         formControlName="whomeetus"
                         class="radio-container"
                     >
-                        <mat-radio-button value="1">Web page</mat-radio-button>
-                        <mat-radio-button value="2">T.V ad</mat-radio-button>
-                        <mat-radio-button value="3">Social Network</mat-radio-button>
-                        <mat-radio-button value="4">Friend</mat-radio-button>
-                        <mat-radio-button value="5">Other</mat-radio-button>
+                        <mat-radio-button value="Web page">Web page</mat-radio-button>
+                        <mat-radio-button value="T.V ad">T.V ad</mat-radio-button>
+                        <mat-radio-button value="Social Network">Social Network</mat-radio-button>
+                        <mat-radio-button value="Friend">Friend</mat-radio-button>
+                        <mat-radio-button value="Other">Other</mat-radio-button>
                     </mat-radio-group>
                 </div>
             </div>
@@ -113,12 +113,19 @@
                 </div>
             </div>
             <div class="button-container">
-                <button mat-raised-button color="primary" (click)="saveForm()">Save</button>
+                <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="saveForm()"
+                    [disabled]="!(basicInformationForm.valid && moreInformationForm.valid)"
+                >
+                    Save
+                </button>
                 <button mat-raised-button color="accent" matStepperPrevious>Back</button>
             </div>
         </form>
     </mat-step>
-    <!-- [disabled]="!(basicInformationForm.valid && moreInformationForm.valid)" -->
+    <!-- -->
 
     <!-- <mat-step>
         <ng-template matStepLabel>Done</ng-template>

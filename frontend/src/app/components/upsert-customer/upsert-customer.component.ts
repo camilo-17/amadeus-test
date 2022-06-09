@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map, Observable, startWith } from 'rxjs';
 
@@ -12,43 +12,10 @@ export class UpsertCustomerComponent implements OnInit {
     minDate: Date;
     maxDate: Date;
 
-    basicInformationForm = this._formBuilder.group({
-        name: [
-            '',
-            [
-                Validators.required,
-                Validators.maxLength(50),
-                Validators.minLength(3),
-                Validators.pattern('^[a-zA-Z ]*$'),
-            ],
-        ],
-        lastname: [
-            '',
-            [
-                Validators.required,
-                Validators.maxLength(50),
-                Validators.minLength(3),
-                Validators.pattern('^[a-zA-Z ]*$'),
-            ],
-        ],
-        age: [
-            '',
-            [
-                Validators.required,
-                Validators.pattern('^[0-9]*$'),
-                Validators.minLength(1),
-                Validators.maxLength(2),
-            ],
-        ],
-        gender: ['', Validators.required],
-        country: ['', [Validators.required]],
-        birthday: ['', Validators.required],
-    });
-    moreInformationForm = this._formBuilder.group({
-        whomeetus: ['', Validators.required],
-        reasonForTrip: ['', [Validators.required, Validators.maxLength(80), Validators.minLength(10)]],
-    });
-    isLinear = false;
+    basicInformationForm: FormGroup | any;
+    moreInformationForm: FormGroup | any;
+
+    isLinear = true;
 
     options: string[] = [];
     filteredOptions: Observable<string[]> | undefined;
@@ -62,12 +29,13 @@ export class UpsertCustomerComponent implements OnInit {
         const currentYear = new Date().getFullYear();
         this.minDate = new Date(currentYear - 100, 0, 1);
         this.maxDate = new Date();
+        this.createForm();
     }
 
     ngOnInit(): void {
         this.filteredOptions = this.basicInformationForm.controls['country'].valueChanges.pipe(
             startWith(''),
-            map((value) => this._filter(value || ''))
+            map((value: any) => this._filter(value || ''))
         );
     }
 
@@ -83,5 +51,48 @@ export class UpsertCustomerComponent implements OnInit {
         }
         const data = { ...this.moreInformationForm.value, ...this.basicInformationForm.value };
         this.dialogRef.close(data);
+    }
+
+    createForm() {
+        const birthday = this.data?.user?.birthday ? new Date(this.data.user.birthday) : null;
+        this.basicInformationForm = this._formBuilder.group({
+            name: [
+                this.data?.user?.name || null,
+                [
+                    Validators.required,
+                    Validators.maxLength(50),
+                    Validators.minLength(3),
+                    Validators.pattern('^[a-zA-Z ]*$'),
+                ],
+            ],
+            lastname: [
+                this.data?.user?.lastname || null,
+                [
+                    Validators.required,
+                    Validators.maxLength(50),
+                    Validators.minLength(3),
+                    Validators.pattern('^[a-zA-Z ]*$'),
+                ],
+            ],
+            age: [
+                this.data?.user?.age || null,
+                [
+                    Validators.required,
+                    Validators.pattern('^[0-9]*$'),
+                    Validators.minLength(1),
+                    Validators.maxLength(2),
+                ],
+            ],
+            gender: [this.data?.user?.gender || null, Validators.required],
+            country: [this.data?.user?.country || null, [Validators.required]],
+            birthday: [birthday, Validators.required],
+        });
+        this.moreInformationForm = this._formBuilder.group({
+            whomeetus: [this.data?.user?.whomeetus || null, Validators.required],
+            reasonForTrip: [
+                this.data?.user?.reasonForTrip || null,
+                [Validators.required, Validators.maxLength(80), Validators.minLength(10)],
+            ],
+        });
     }
 }

@@ -5,6 +5,7 @@
 export const environment = {
     production: false,
     restCountries: 'https://restcountries.com',
+    backend: 'http://localhost:5237',
 };
 
 /*

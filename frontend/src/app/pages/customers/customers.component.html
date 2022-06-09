@@ -4,7 +4,7 @@
             <button mat-raised-button color="primary" (click)="createCustomer()">Create</button>
         </div>
         <div class="col-lg-12">
-            <app-table></app-table>
+            <app-table (eventsTable)="getEvents($event)" #TableComponent></app-table>
         </div>
     </div>
 </div>
