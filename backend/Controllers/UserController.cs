@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-
+using backend.Models;
+using backend.Services;
 namespace backend.Controllers;
 
 [ApiController]
@@ -7,43 +8,54 @@ namespace backend.Controllers;
 public class UserController : ControllerBase
 {
 
+    IUserService userService;
+
     private readonly ILogger<UserController> _logger;
     private static List<User> listUser = new List<User>();
-
-    public UserController(ILogger<UserController> logger)
+    UserContext dbcontext;
+    public UserController(ILogger<UserController> logger, IUserService service, UserContext db)
     {
         _logger = logger;
-
-        if(listUser == null || !listUser.Any()) {
-            listUser = Enumerable.Range(1, 5).Select(index => new User
-            {
-                Age = 12 + index,
-                Name = "camilo",
-                Lastname = "caro"
-            })
-            .ToList();
-        }
+        userService = service;
+        dbcontext = db;
     }
 
     [HttpGet(Name = "GetUser")]
-    public IEnumerable<User> Get()
+    public IActionResult Get()
     {
         _logger.LogInformation("Get users method was call");
-        return listUser;
+        return Ok(userService.Get());
     }
 
     [HttpPost]
-    public IActionResult Post(User User)
+    public IActionResult Post([FromBody] User user)
     {
-        listUser.Add(User);
-
+        _logger.LogInformation(user.Name);
+        userService.Save(user);
         return Ok();
     }
 
-    [HttpDelete("{index}")]
-    public IActionResult Delete(int index)
+    [HttpPost]
+    [Route("createdatabase")]
+    public IActionResult CreateDatabase()
     {
-        listUser.RemoveAt(index);
+        dbcontext.Database.EnsureCreated();
         return Ok();
     }
+
+
+    [HttpPut("{id}")]
+    public IActionResult Put(Guid id, [FromBody] User user)
+    {
+        userService.Update(id, user);
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(Guid id)
+    {
+        userService.Delete(id);
+        return Ok();
+    }
+
 }

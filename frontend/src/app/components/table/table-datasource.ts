@@ -15,7 +15,6 @@ export interface TableItem {
     birthday?: string;
     reasonForTrip?: string;
     whomeetus?: string;
-    img?: string;
 }
 
 // TODO: replace this with real data from your application
