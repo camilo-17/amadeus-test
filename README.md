@@ -22,7 +22,7 @@ navigate to https://localhost:7294/swagger/index.html
 
 ## Run DB
 
-Needs docker desktop
+Needs docker desktop run as an admin
 
 ```
 net stop winnat
