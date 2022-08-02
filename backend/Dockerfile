@@ -1,16 +1,17 @@
-FROM mcr.microsoft.com/dotnet/aspnet:latest AS base
+# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
-EXPOSE 80
-FROM mcr.microsoft.com/dotnet/sdk:latest AS build
-WORKDIR /src
-COPY ["backend.csproj", "./"]
-RUN dotnet restore "./backend.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "backend.csproj" -c Release -o /app/build
-FROM build AS publish
-RUN dotnet publish "backend.csproj" -c Release -o /app/publish
-FROM base AS final
+
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
+EXPOSE 80 443
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "backend.dll"]

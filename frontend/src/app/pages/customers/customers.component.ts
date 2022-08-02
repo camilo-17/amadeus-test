@@ -115,8 +115,9 @@ export class CustomersComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((response: User) => {
             if (response) {
-                response.birthday = this.utilsService.modifyDateFormat(response.birthday);
-                this.saveCustomer(response);
+                let { userId, ...newResponse }: any = response;
+                newResponse.birthday = this.utilsService.modifyDateFormat(newResponse.birthday);
+                this.saveCustomer(newResponse);
             }
         });
     }

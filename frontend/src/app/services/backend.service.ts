@@ -34,6 +34,7 @@ export class BackendService {
 
     updateCustomer(user: User) {
         const { userId } = user;
+        console.log(userId);
         return this.createPutRequest('User', user, userId);
     }
 

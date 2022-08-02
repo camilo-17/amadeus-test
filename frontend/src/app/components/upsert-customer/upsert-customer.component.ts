@@ -49,7 +49,11 @@ export class UpsertCustomerComponent implements OnInit {
         if (this.moreInformationForm.invalid || this.basicInformationForm.invalid) {
             return;
         }
-        const data = { ...this.moreInformationForm.value, ...this.basicInformationForm.value };
+        const data = {
+            ...this.moreInformationForm.value,
+            ...this.basicInformationForm.value,
+            userId: this.data?.user?.userId || null,
+        };
         this.dialogRef.close(data);
     }
 
